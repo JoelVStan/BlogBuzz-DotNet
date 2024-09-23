@@ -12,6 +12,8 @@ builder.Services.AddDbContext<BlogBuzzDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("BlogBuzzDbConnectionString")));
 
 builder.Services.AddScoped<ITagRepository, TagRepository>();
+builder.Services.AddScoped<IBlogPostRepository, BlogPostRepository>();
+builder.Services.AddScoped<IImageRespository, CloudinaryImageRepository>();
 
 var app = builder.Build();
 
