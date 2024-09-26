@@ -4,6 +4,7 @@ using BlogBuzz.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlogBuzz.Migrations
 {
     [DbContext(typeof(BlogBuzzDbContext))]
-    partial class BlogBuzzDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240925063252_Adding like functionality")]
+    partial class Addinglikefunctionality
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -65,32 +68,6 @@ namespace BlogBuzz.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("BlogPosts");
-                });
-
-            modelBuilder.Entity("BlogBuzz.Models.Domain.BlogPostComment", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("BlogPostId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<DateTime>("DateAdded")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<Guid>("UserId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("BlogPostId");
-
-                    b.ToTable("BlogPostComment");
                 });
 
             modelBuilder.Entity("BlogBuzz.Models.Domain.BlogPostLike", b =>
@@ -146,15 +123,6 @@ namespace BlogBuzz.Migrations
                     b.ToTable("BlogPostTag");
                 });
 
-            modelBuilder.Entity("BlogBuzz.Models.Domain.BlogPostComment", b =>
-                {
-                    b.HasOne("BlogBuzz.Models.Domain.BlogPost", null)
-                        .WithMany("Comments")
-                        .HasForeignKey("BlogPostId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("BlogBuzz.Models.Domain.BlogPostLike", b =>
                 {
                     b.HasOne("BlogBuzz.Models.Domain.BlogPost", null)
@@ -181,8 +149,6 @@ namespace BlogBuzz.Migrations
 
             modelBuilder.Entity("BlogBuzz.Models.Domain.BlogPost", b =>
                 {
-                    b.Navigation("Comments");
-
                     b.Navigation("Likes");
                 });
 #pragma warning restore 612, 618

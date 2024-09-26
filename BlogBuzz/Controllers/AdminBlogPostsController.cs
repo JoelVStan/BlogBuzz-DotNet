@@ -1,11 +1,13 @@
 ﻿using BlogBuzz.Models.Domain;
 using BlogBuzz.Models.Domain.ViewModels;
 using BlogBuzz.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace BlogBuzz.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminBlogPostsController : Controller
     {
         private readonly ITagRepository tagRepository;

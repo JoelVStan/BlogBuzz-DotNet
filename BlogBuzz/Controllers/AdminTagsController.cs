@@ -3,11 +3,14 @@ using BlogBuzz.Data;
 using BlogBuzz.Models.Domain;
 using BlogBuzz.Models.Domain.ViewModels;
 using BlogBuzz.Repositories;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace BlogBuzz.Controllers
 {
+
+    [Authorize(Roles = "Admin")]
     public class AdminTagsController : Controller
     {
         private readonly ITagRepository tagRepository;
@@ -16,7 +19,6 @@ namespace BlogBuzz.Controllers
         {
             this.tagRepository = tagRepository;
         }
-
 
         [HttpGet]
         public IActionResult Add()
