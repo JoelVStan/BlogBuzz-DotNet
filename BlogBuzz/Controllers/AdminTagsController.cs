@@ -30,24 +30,57 @@ namespace BlogBuzz.Controllers
         [ActionName("Add")]
         public async Task<IActionResult> Add(AddTagRequest addTagRequest)
         {
-            //mapping AddTagRequest to Tag domain model
+            ValidateAddTagRequest(addTagRequest);
+
+            if (ModelState.IsValid == false)
+            {
+                return View();
+            }
+
+            // Mapping AddTagRequest to Tag domain model
             var tag = new Tag
             {
                 Name = addTagRequest.Name,
-                DisplayName = addTagRequest.DisplayName,
+                DisplayName = addTagRequest.DisplayName
             };
 
             await tagRepository.AddAsync(tag);
-                        
+
             return RedirectToAction("List");
         }
 
         [HttpGet]
         [ActionName("List")]
-        public async Task<IActionResult> List()
+        public async Task<IActionResult> List(
+            string? searchQuery,
+            string? sortBy,
+            string? sortDirection,
+            int pageSize = 3,
+            int pageNumber = 1)
         {
-            // use dbContext to read tags
-            var tags = await tagRepository.GetAllAsync();
+            var totalRecords = await tagRepository.CountAsync();
+            var totalPages = Math.Ceiling((decimal)totalRecords / pageSize);
+
+            if (pageNumber > totalPages)
+            {
+                pageNumber--;
+            }
+
+            if (pageNumber < 1)
+            {
+                pageNumber++;
+            }
+
+
+            ViewBag.TotalPages = totalPages;
+            ViewBag.SearchQuery = searchQuery;
+            ViewBag.SortBy = sortBy;
+            ViewBag.SortDirection = sortDirection;
+            ViewBag.PageSize = pageSize;
+            ViewBag.PageNumber = pageNumber;
+
+            // use dbContext to read the tags
+            var tags = await tagRepository.GetAllAsync(searchQuery, sortBy, sortDirection, pageNumber, pageSize);
 
             return View(tags);
         }
@@ -110,6 +143,17 @@ namespace BlogBuzz.Controllers
             }
             //show error notifi
             return RedirectToAction("Edit", new { id = editTagRequest.Id });
+        }
+
+        private void ValidateAddTagRequest(AddTagRequest request)
+        {
+            if (request.Name is not null && request.DisplayName is not null)
+            {
+                if (request.Name == request.DisplayName)
+                {
+                    ModelState.AddModelError("DisplayName", "Name cannot be the same as DisplayName");
+                }
+            }
         }
     }
 }
